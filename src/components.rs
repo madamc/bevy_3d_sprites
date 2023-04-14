@@ -21,3 +21,20 @@ pub struct Door;
 
 #[derive(Component)]
 struct Name(String);
+
+#[derive(Debug, Clone, Default)]
+pub struct CommandCompletedEvent;
+
+#[derive(Debug, Clone, Default)]
+pub struct MenuStartEvent;
+
+#[derive(Resource)]
+pub struct CommandCompleteIndicator {
+    pub completed: bool
+}
+
+impl Default for CommandCompleteIndicator {
+    fn default() -> Self {
+        CommandCompleteIndicator { completed: false }
+    }
+}

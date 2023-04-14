@@ -1,5 +1,5 @@
 [package]
-name = "bev-game1"
+name = "bev-game2"
 version = "0.1.0"
 edition = "2021"
 
@@ -16,14 +16,17 @@ bevy_sprite3d = "^2.3"
 rand = "^0.8"
 syn = { version = "^1" }
 bevy-inspector-egui = "^0.16.6"
-iyes_loopless = "^0.9.1"
+iyes_loopless = "0.9.1"
 kayak_ui = "^0.2.0"
 kayak_font = "^0.2.0"
 substring = "^1.4.5"
 notify = "5.0.0-pre.15"
+seldom_state = "^0.3.0"
+seldom_pixel = { git = "https://github.com/Seldom-SE/seldom_pixel", rev = "2b599a4" }
+mandoqueue_macro = { path = "mandoqueue_macro" }
 
 [dependencies.bevy]
-version = "^0.9.1"
+version = "0.9.1"
 default-features = false
 # These are the remaining default features other than `bevy_audio` and `vorbis`
 features = [

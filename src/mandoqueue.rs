@@ -1,21 +1,24 @@
 use bevy::{
     prelude::*, 
-    time::{FixedTimestep, Stopwatch}, ecs::system::Command,
+    time::{Stopwatch}
 };
+use seldom_pixel::prelude::PxPosition;
 use std::collections::VecDeque;
 use iyes_loopless::prelude::*;
 use kayak_ui::{prelude::FontMapping};
 
-use crate::ui::{UIMessageWindow, CurrentText};
+use crate::{ui::{UIMessageWindow, CurrentText}, YNYN_Y};
 use crate::{Person};
-use crate::game_commands::{CommandCompleteIndicator, GameCommandsExt };
+use crate::game_commands::{ GameCommandsExt };
 use crate::components::*;
 use crate::messages::*;
 
 #[derive(Clone)]
 pub enum MandoParam {
+    Null,
     Int(u32),
     Float(f32),
+    IVec2(IVec2),
     Vector2(Vec2),
     Vector3(Vec3),
     String(String),
@@ -25,10 +28,15 @@ pub enum MandoParam {
 
 #[derive(Clone, PartialEq, Copy)]
 pub enum MandoType {
-    ShowMainMenu,
-    HideMainMenu,
     PlayAnimOnce,
-    MoveToLoc,
+    YNYNWalkL,
+    YNYNIdleL,
+    YNYNWalkR,
+    YNYNIdleR,
+    ChangeAnim,
+    MoveToLoc3D,
+    MoveToLoc2D,
+    MoveToLoc2DIv2,
     PauseQueue,
     ShowUIMessage,
     HideUIMessage,
@@ -47,7 +55,7 @@ pub struct MandoQueue {
 
 impl Default for MandoQueue {
     fn default() -> Self {
-        let mando = Mando { mandoType: MandoType::FillerMando, mandoParams: (vec![MandoParam::Int(1)]) };
+        let mando = Mando { mandoType: MandoType::HolderMando, mandoParams: (vec![MandoParam::Int(1)]) };
         MandoQueue { mandos: VecDeque::new(), currentMando: vec![mando], timer: Stopwatch::new() }
     }
 }
@@ -62,7 +70,7 @@ pub fn fill_mando_queue(
     mut commands: Commands,
     mut set: ParamSet<(
         ResMut<MandoQueue>,
-        Query<(Entity, &Transform), With<Person>>,
+        Query<(Entity, &PxPosition), With<Person>>,
         Query<(Entity), With<UIMessageWindow>>,
         Query<(Entity), With<Door>>,
     )>,
@@ -73,42 +81,49 @@ pub fn fill_mando_queue(
 
     let mut vecParams: Vec<Mando> = Vec::new();
     let mut mando = Mando {mandoType: MandoType::FillerMando, mandoParams: vec![]};
-    let translation = set.p1().single().1.translation;
+    let plyr_location = set.p1().single().1.0;
     let plyr_entity = set.p1().single().0;
-    let ui_entity = set.p2().get_single();
-    let door_entity = set.p3().single();
+    // let ui_entity = set.p2().get_single();
+    // let door_entity = set.p3().single();
     
-    // vecParams = Vec::new();
-    // mando = Mando {mandoType: MandoType::ShowMainMenu, mandoParams: vec![]};
-    // vecParams.push(mando);
-    // set.p0().mandos.push_back(vecParams);
-    
-    // vecParams = Vec::new();
-    // mando = Mando {mandoType: MandoType::HolderMando, mandoParams: vec![]};
-    // vecParams.push(mando);
-    // set.p0().mandos.push_back(vecParams);
-    
+    vecParams = Vec::new();
+    mando = Mando {mandoType: MandoType::PauseQueue, mandoParams: vec![]};
+    vecParams.push(mando);
+    set.p0().mandos.push_back(vecParams);
 
-    // vecParams = Vec::new();
-    // mando = Mando {mandoType: MandoType::HideMainMenu, mandoParams: vec![]};
-    // vecParams.push(mando);
-    // set.p0().mandos.push_back(vecParams);
 
     vecParams = Vec::new();
-    mando = Mando {mandoType: MandoType::PlayAnimOnce, mandoParams: vec![
-        MandoParam::BevyEntity(door_entity)   
+    mando = Mando {mandoType: MandoType::YNYNWalkL, mandoParams: vec![
+        MandoParam::BevyEntity(plyr_entity)   
     ]};
     vecParams.push(mando);
     set.p0().mandos.push_back(vecParams);
-    
+
+    // vecParams = Vec::new();
+    // mando =  Mando{ mandoType: MandoType::MoveToLoc, mandoParams: vec![
+    //     MandoParam::Float(3.50),                             // duration
+    //     MandoParam::Vector3(translation),                   // location
+    //     MandoParam::Vector3(Vec3{x: -3.0, y:-0.25, z: -2.509}),  // destination
+    //     MandoParam::BevyEntity(plyr_entity)                 // entity
+    // ]}; 
+    // vecParams.push(mando); 
+    // set.p0().mandos.push_back(vecParams);
+
     vecParams = Vec::new();
-    mando =  Mando{ mandoType: MandoType::MoveToLoc, mandoParams: vec![
-        MandoParam::Float(3.50),                             // duration
-        MandoParam::Vector3(translation),                   // location
-        MandoParam::Vector3(Vec3{x: -3.0, y:-0.25, z: -2.509}),  // destination
+    mando =  Mando{ mandoType: MandoType::MoveToLoc2DIv2, mandoParams: vec![
+        MandoParam::Float(5.),                             // duration
+        MandoParam::IVec2(plyr_location),                   // location
+        MandoParam::IVec2(IVec2 {x: 30, y:YNYN_Y}),  // destination
         MandoParam::BevyEntity(plyr_entity)                 // entity
     ]}; 
     vecParams.push(mando); 
+    set.p0().mandos.push_back(vecParams);
+
+    vecParams = Vec::new();
+    mando = Mando {mandoType: MandoType::YNYNIdleL, mandoParams: vec![
+        MandoParam::BevyEntity(plyr_entity)   
+    ]};
+    vecParams.push(mando);
     set.p0().mandos.push_back(vecParams);
 
     vecParams = Vec::new();
@@ -117,16 +132,13 @@ pub fn fill_mando_queue(
     set.p0().mandos.push_back(vecParams);
 
     vecParams = Vec::new();
-    mando = Mando {mandoType: MandoType::ShowUIMessage, mandoParams: vec![
-        // MandoParam::String(create_message(Message1))//Message1.to_owned()))
-    ]};
+    mando = Mando {mandoType: MandoType::ShowUIMessage, mandoParams: vec![]};
     vecParams.push(mando);
     set.p0().mandos.push_back(vecParams);
 
     vecParams = Vec::new();
-    mando = Mando {mandoType: MandoType::AffectTypeWriter, mandoParams: vec![MandoParam::String(Message1.to_owned())]};
-        // MandoParam::BevyEntity(ui_message_percentage_entity),
-    // ]};
+    mando = Mando {mandoType: MandoType::AffectTypeWriter, mandoParams: vec![
+        MandoParam::String(Message1.to_owned())]};
     vecParams.push(mando);
     set.p0().mandos.push_back(vecParams);
 
@@ -150,9 +162,8 @@ pub fn fill_mando_queue(
     // set.p0().mandos.push_back(vecParams);
 
     vecParams = Vec::new();
-    mando = Mando {mandoType: MandoType::AffectTypeWriter, mandoParams: vec![MandoParam::String(Message2.to_owned())]};
-        // MandoParam::BevyEntity(ui_message_percentage_entity),
-    // ]};
+    mando = Mando {mandoType: MandoType::AffectTypeWriter, mandoParams: vec![
+        MandoParam::String(Message2.to_owned())]};
     vecParams.push(mando);
     set.p0().mandos.push_back(vecParams);
 
@@ -175,18 +186,13 @@ pub fn operate_mando_queue (
     mut set: ParamSet<(
         ResMut<MandoQueue>,
         ResMut<CommandCompleteIndicator>,
-        Res<FixedTimesteps>,
-    )>,
-    mut set2: ParamSet<(
-        ResMut<FontMapping>,
-        Res<AssetServer>,
-        Query<Entity, With<UIMessageWindow>>,
-    )>,
+        Res<FixedTimesteps>, 
+    )>, 
 ) 
 {
+    // let snep = set.p2();
     if set.p1().completed && set.p0().mandos.len() > 0 {
         let firstMando = set.p0().mandos.pop_front().unwrap();
-
         set.p0().currentMando = firstMando;
 
         set.p1().completed = false;
@@ -195,9 +201,17 @@ pub fn operate_mando_queue (
         // for debugging
         for mando in &set.p0().currentMando {
         match mando.mandoType {
-            MandoType::MoveToLoc => {
+            MandoType::MoveToLoc3D => {
                 println!("shmoop1");
                 info!("shmoop1");
+            },
+            MandoType::MoveToLoc2D => {
+                println!("shmoop9");
+                info!("shmoop9");
+            },
+            MandoType::MoveToLoc2DIv2 => {
+                println!("shmoop10");
+                info!("shmoop10");
             },
             MandoType::PauseQueue => {
                 println!("shmoop2");
@@ -223,17 +237,29 @@ pub fn operate_mando_queue (
                 println!("shmoop7");
                 info!("shmoop7");
             }
-            MandoType::ShowMainMenu => {
+            MandoType::PlayAnimOnce => {
                 println!("shmoop8");
                 info!("shmoop8");
             }
-            MandoType::HideMainMenu => {
-                println!("shmoop9");
-                info!("shmoop9");
+            MandoType::YNYNIdleL => {
+                println!("shmoop12");
+                info!("shmoop12");
             }
-            MandoType::PlayAnimOnce => {
-                println!("shmoop10");
-                info!("shmoop10");
+            MandoType::YNYNWalkL => {
+                println!("shmoop13");
+                info!("shmoop13");
+            }
+            MandoType::YNYNIdleR => {
+                println!("shmoop14");
+                info!("shmoop14");
+            }
+            MandoType::YNYNWalkR => {
+                println!("shmoop15");
+                info!("shmoop15");
+            }
+            MandoType::ChangeAnim => {
+                println!("shmoop11");
+                info!("shmoop11");
             }
             }
         }
@@ -242,20 +268,38 @@ pub fn operate_mando_queue (
     if set.p1().completed && set.p0().mandos.len() == 0 {
 
     } else {
+    // let ptes = set.p2()
     let step = set.p2().get_current().unwrap().step;
     set.p0().timer.tick(step);
     let elapsedTime = set.p0().timer.elapsed().as_millis();
     let mut completeCommand = false;
-    
     for mando in &set.p0().currentMando {
         match mando.mandoType {
-            MandoType::MoveToLoc => {
+            MandoType::MoveToLoc3D => {
                 commands.move_to_loc_3d(            
                     step.as_millis(),
                     elapsedTime, 
                     mpf(&mando.mandoParams[0]), // duration
-                    mpv3(&mando.mandoParams[1]), // location
-                    mpv3(&mando.mandoParams[2]), // destination 
+                    mpfv3(&mando.mandoParams[1]), // location
+                    mpfv3(&mando.mandoParams[2]), // destination 
+                    mpe(&mando.mandoParams[3])); // entity 
+            },
+            MandoType::MoveToLoc2D => {
+                commands.move_to_loc_3d(            
+                    step.as_millis(),
+                    elapsedTime, 
+                    mpf(&mando.mandoParams[0]), // duration
+                    mpfv3(&mando.mandoParams[1]), // location
+                    mpfv3(&mando.mandoParams[2]), // destination 
+                    mpe(&mando.mandoParams[3])); // entity 
+            },
+            MandoType::MoveToLoc2DIv2 => {
+                commands.move_to_loc_2d_i(            
+                    step.as_millis(),
+                    elapsedTime, 
+                    mpf(&mando.mandoParams[0]), // duration
+                    mpiv2(&mando.mandoParams[1]), // location
+                    mpiv2(&mando.mandoParams[2]), // destination 
                     mpe(&mando.mandoParams[3])); // entity 
             },
             MandoType::PauseQueue => {
@@ -273,17 +317,30 @@ pub fn operate_mando_queue (
                 commands.affect_typewriter(elapsedTime, mps(&mando.mandoParams[0]));
             },
             MandoType::FillerMando => {
-                commands.filler_mando();
-            }
-            MandoType::ShowMainMenu => {
-                commands.show_main_menu();
-            }
-            MandoType::HideMainMenu => {
-                commands.hide_main_menu();
+                // commands.filler_mando();
             }
             MandoType::PlayAnimOnce => {
-                commands.setup_scene1(
+                commands.play_anim_once(
                     mpe(&mando.mandoParams[0])); // entity
+            }
+            MandoType::YNYNIdleL => {
+                commands.ynyn_Idle_l(
+                    mpe(&mando.mandoParams[0])); // entity
+            }
+            MandoType::YNYNWalkL => {
+                commands.ynyn_walk_l(
+                    mpe(&mando.mandoParams[0])); // entity
+            }
+            MandoType::YNYNIdleR => {
+                commands.ynyn_walk_r(
+                    mpe(&mando.mandoParams[0])); // entity
+            }
+            MandoType::YNYNWalkR => {
+                commands.ynyn_walk_r(
+                    mpe(&mando.mandoParams[0])); // entity
+            }
+            MandoType::ChangeAnim => {
+                commands.change_anim();
             }
             MandoType::HolderMando => {
                 commands.holder_mando();
@@ -306,7 +363,21 @@ pub fn mpf(mp: &MandoParam) -> f32 {
     panic!("This isn't an mpf!");
     // return -999.999
 }
-pub fn mpv3(mp: &MandoParam) -> Vec3 {
+pub fn mpiv2(mp: &MandoParam) -> IVec2 {
+    if let MandoParam::IVec2(a) = mp {
+        return *a
+    } 
+    panic!("This isn't an mpv3!");
+    // return Vec3 { x: -999.999, y: -999.999, z: -999.999 }
+}
+pub fn mpfv2(mp: &MandoParam) -> Vec2 {
+    if let MandoParam::Vector2(a) = mp {
+        return *a
+    } 
+    panic!("This isn't an mpv3!");
+    // return Vec3 { x: -999.999, y: -999.999, z: -999.999 }
+}
+pub fn mpfv3(mp: &MandoParam) -> Vec3 {
     if let MandoParam::Vector3(a) = mp {
         return *a
     } 

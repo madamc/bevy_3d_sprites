@@ -243,7 +243,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9e1b586273c5702936fe7b7d6896644d8be71e6314cfe09d3167c95f712589e8"
 
 [[package]]
-name = "bev-game1"
+name = "bev-game2"
 version = "0.1.0"
 dependencies = [
  "bevy 0.9.1",
@@ -255,8 +255,11 @@ dependencies = [
  "iyes_loopless",
  "kayak_font",
  "kayak_ui",
+ "mandoqueue_macro",
  "notify",
  "rand",
+ "seldom_pixel",
+ "seldom_state",
  "substring",
  "syn",
 ]
@@ -2981,6 +2984,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "mandoqueue_macro"
+version = "0.1.0"
+dependencies = [
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "matchers"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4034,6 +4045,45 @@ name = "scopeguard"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d29ab0c6d3fc0ee92fe66e2d99f700eab17a8d57d1c1d3b748380fb20baa78cd"
+
+[[package]]
+name = "seldom_fn_plugin"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "acb02fbba56a64320cb16960e47a16f9e6368f31ecb1b62fda0ecd0b2d346611"
+dependencies = [
+ "bevy 0.9.1",
+]
+
+[[package]]
+name = "seldom_pixel"
+version = "0.2.0-dev"
+source = "git+https://github.com/Seldom-SE/seldom_pixel?rev=2b599a4#2b599a4cf2737ac53e6f9034292608294dcd2435"
+dependencies = [
+ "bevy 0.9.1",
+ "iyes_loopless",
+ "seldom_fn_plugin",
+ "seldom_pixel_macros",
+]
+
+[[package]]
+name = "seldom_pixel_macros"
+version = "0.1.0"
+source = "git+https://github.com/Seldom-SE/seldom_pixel?rev=2b599a4#2b599a4cf2737ac53e6f9034292608294dcd2435"
+dependencies = [
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "seldom_state"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a15cf328249c9ea0a36a2cdbdc09db0a70e1f8eb66382ef5f6edcf2043d180fa"
+dependencies = [
+ "bevy 0.9.1",
+ "seldom_fn_plugin",
+]
 
 [[package]]
 name = "semver"

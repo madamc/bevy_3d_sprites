@@ -6,7 +6,8 @@ use kayak_ui::prelude::{widgets::*, *};
 use substring::Substring;
 
 use crate::ImageAssets;
-use crate::game_commands::{GameCommandsExt, CommandCompleteIndicator};
+use crate::components::CommandCompleteIndicator;
+use crate::game_commands::{GameCommandsExt};
 use crate::mandoqueue::{MandoQueue, MandoType, mps};
 
 #[derive(Component)]
@@ -25,6 +26,8 @@ pub struct CurrentTextState {
     pub chars: u128,
     pub text: String,
     pub iter: i8,
+    //elapsed time for iter
+    pub elapsed_time: u128,
 }
 
 #[derive(Component, Default, Debug, Clone, PartialEq, Eq)]
