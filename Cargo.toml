@@ -22,8 +22,12 @@ kayak_font = "^0.2.0"
 substring = "^1.4.5"
 notify = "5.0.0-pre.15"
 seldom_state = "^0.3.0"
+bevy_vox_mesh = "0.5"
+bevy_vox = "0.6"
 seldom_pixel = { git = "https://github.com/Seldom-SE/seldom_pixel", rev = "2b599a4" }
 mandoqueue_macro = { path = "mandoqueue_macro" }
+bevy_obj = "0.9.1"
+# bevy_rapier3d = "0.21.0"
 
 [dependencies.bevy]
 version = "0.9.1"

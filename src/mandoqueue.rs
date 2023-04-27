@@ -23,6 +23,7 @@ pub enum MandoParam {
     Vector3(Vec3),
     String(String),
     BevyEntity(Entity),
+    MeshE(Handle<Mesh>),
     BevyEntities(Vec<Entity>),
 }
 
@@ -395,5 +396,12 @@ pub fn mpe(mp: &MandoParam) -> Entity {
         return *a
     } 
     panic!("This isn't an mpe!");
+    // return Vec3 { x: -999.999, y: -999.999, z: -999.999 }
+}
+pub fn mpa(mp: &MandoParam) -> Handle<Mesh> {
+    if let MandoParam::MeshE(a) = mp {
+        return a.clone()
+    } 
+    panic!("This isn't an mpa!");
     // return Vec3 { x: -999.999, y: -999.999, z: -999.999 }
 }

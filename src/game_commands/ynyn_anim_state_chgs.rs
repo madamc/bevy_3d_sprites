@@ -20,7 +20,7 @@ fn ynyn_walk_l_cmd2(world: &mut World, entity: Entity) {
 }
 
 pub fn ynyn_walk_l_cmd(mp: Vec<MandoParam>, world: &mut World, delta: u128, elapsed_time: u128) {
-    println!("Squibbo99");
+    println!("Add walk");
     let mut entity = mpe(&mp[0]);
 
     let mut state = SystemState::<(Commands)>::new(world);
@@ -47,7 +47,7 @@ impl bevy::ecs::system::Command for YNYNIdleLCMD {
 
 pub fn ynyn_idle_l_cmd(mp: Vec<MandoParam>, world: &mut World, delta: u128, elapsed_time: u128) {
     let mut entity = mpe(&mp[0]);
-
+    println!("Add idle");
     let mut state = SystemState::<(Commands)>::new(world);
     let mut cmds = state.get_mut(world);
     cmds.entity(entity).insert(YNYNIdleLComp);

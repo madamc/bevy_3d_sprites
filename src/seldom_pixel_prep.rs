@@ -45,8 +45,9 @@ impl Trigger for YNYNWalkLTrigger {
     type Param<'w, 's> = (Commands<'w, 's>, Query<'w, 's, Entity, Added<YNYNWalkLComp>>);
 
     fn trigger(&self, _: Entity, added: &Self::Param<'_, '_>) -> bool {
-    
+        // println!("not triggered walk");
         for ent in added.1.iter() {
+            // println!("triggered walk");
             return true
         }
         return false
@@ -58,7 +59,9 @@ impl Trigger for YNYNIdleLTrigger {
     type Param<'w, 's> = (Commands<'w, 's>, Query<'w, 's, Entity, Added<YNYNIdleLComp>>);
 
     fn trigger(&self, _: Entity, added: &Self::Param<'_, '_>) -> bool {
+        // println!("not triggered idle");
         for ent in added.1.iter() {
+            // println!("triggered idle");
             return true
         }
         return false
@@ -92,6 +95,23 @@ impl Trigger for YNYNIdleRTrigger {
 #[derive(Bundle, Clone)]
 pub struct AnimBundle {
     pub sprite: Handle<PxSprite>,
-    #[bundle]
+    // #[bundle]
     pub animation: PxAnimationBundle,
+}
+
+#[derive(Bundle, Clone)]
+pub struct VoxAnimBundle {
+    pub voxel_mesh: Handle<Mesh>,
+    pub voxel_mat: Handle<StandardMaterial>,
+    #[bundle]
+    pub animation: VoxAnim,
+}
+
+#[derive(Component, Clone)]
+pub struct VoxAnim {
+    pub frame_duration: usize,
+    pub frame_time_lapsed: usize,
+    pub frame_count: usize,
+    pub meshes: Vec<Handle<Mesh>>,
+    pub materials: Vec<Handle<StandardMaterial>>,
 }

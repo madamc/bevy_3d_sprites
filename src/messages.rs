@@ -7,3 +7,8 @@ pub const Message2: &str = "But of course, there were many other phalanx divisio
 pub fn print_all_messages() {
     println!("Kaplow!!");
 }
+
+pub const Message3: &str = "Brother Bailus and Balus went with Father Whitby to teach a seminaric to the Mothers' Fishing Guild.";
+pub const Message4: &str = "When they returned, Brother Bailus was misty eyed and sobbing, Father Whitby was steaming mad."; 
+pub const Message5: &str = "Brother Balus was trying his hardest to contain his giggles.";
+pub const Message6: &str = "No one will tell what happened....";
