@@ -107,6 +107,13 @@ pub struct VoxAnimBundle {
     pub animation: VoxAnim,
 }
 
+#[derive(Bundle, Clone)]
+pub struct VoxAnimBundle2 {
+    pub voxel_mesh: Handle<Mesh>,
+    #[bundle]
+    pub animation: VoxAnim2,
+}
+
 #[derive(Component, Clone)]
 pub struct VoxAnim {
     pub frame_duration: usize,
@@ -114,4 +121,12 @@ pub struct VoxAnim {
     pub frame_count: usize,
     pub meshes: Vec<Handle<Mesh>>,
     pub materials: Vec<Handle<StandardMaterial>>,
+}
+
+#[derive(Component, Clone)]
+pub struct VoxAnim2 {
+    pub frame_duration: usize,
+    pub frame_time_lapsed: usize,
+    pub frame_count: usize,
+    pub meshes: Vec<Handle<Mesh>>,
 }

@@ -11,6 +11,7 @@ use kayak_ui::{prelude::FontMapping};
 use kayak_font::KayakFont;
 use seldom_state::prelude::*;
 use bevy_obj::*;
+use bevy_vox_mesh::VoxMeshPlugin;
 // use bevy_rapier3d::prelude::*;
 use std::f32::consts::PI;
 
@@ -52,6 +53,24 @@ pub struct ImageAssets {
             columns = 8, rows = 7, padding_x = 0., padding_y = 0.))]
     #[asset(path = "art/momcard1.png")]
     tileset: Handle<TextureAtlas>,
+    #[asset(path = "art/peon/peon6.vox")]
+    peon_idle_1: Handle<Mesh>,
+    #[asset(path = "art/peon/peon7.vox")]
+    peon_idle_2: Handle<Mesh>,
+    #[asset(path = "art/peon/peon8.vox")]
+    peon_idle_3: Handle<Mesh>,
+    #[asset(path = "art/peon/peon0.vox")]
+    peon_walk_1: Handle<Mesh>,
+    #[asset(path = "art/peon/peon1.vox")]
+    peon_walk_2: Handle<Mesh>,
+    #[asset(path = "art/peon/peon2.vox")]
+    peon_walk_3: Handle<Mesh>,
+    #[asset(path = "art/peon/peon3.vox")]
+    peon_walk_4: Handle<Mesh>,
+    #[asset(path = "art/peon/peon4.vox")]
+    peon_walk_5: Handle<Mesh>,
+    #[asset(path = "art/peon/peon5.vox")]
+    peon_walk_6: Handle<Mesh>,
     #[asset(path = "art/monkobj/monk-1.obj")]
     monk_idle_1: Handle<Mesh>,
     #[asset(path = "art/monkobj/monk-2.obj")]
@@ -112,7 +131,8 @@ pub struct ImageAssets {
     monastery_back_shelf: Handle<Mesh>,
     #[asset(path = "art/monkobj/monastery-back2-shelf-1.png")]
     monastery_back_shelf_png: Handle<Image>,
-    #[asset(path = "art/monkobj/monastery-back-1.obj")]
+    // #[asset(path = "art/monkobj/monastery-back-1.obj")]
+    #[asset(path = "art/monkobj/monastery-back.vox")]
     monastery_back: Handle<Mesh>,
     #[asset(path = "art/monkobj/monastery-back-1.png")]
     monastery_back_png: Handle<Image>,
@@ -143,6 +163,7 @@ fn main() {
         .add_plugin(KayakWidgets)
         .add_plugin(StateMachinePlugin)
         .add_plugin(ObjPlugin)
+        .add_plugin(VoxMeshPlugin::default())
         .add_plugin(TriggerPlugin::<YNYNIdleLTrigger>::default())
         .add_plugin(TriggerPlugin::<YNYNWalkLTrigger>::default())
         .insert_resource(ClearColor(Color::BLACK))
@@ -386,13 +407,15 @@ fn scene_setup(
     // smaller backgrounds
 
     commands.spawn(PbrBundle {
-        transform: Transform::from_xyz(-2.0, 0.0, -5.0) * Transform::from_scale((02.101, 02.101, 02.101).into())
+        transform: Transform::from_xyz(-2.0, 0.0, -5.0) * Transform::from_scale((00.1, 0.1, 0.1).into())
             * Transform::from_rotation(Quat::from_axis_angle(Vec3::Y, PI)),
         mesh: assets.monastery_back.clone(),
+        // material: stdmats.add(Color::rgb(1., 1., 1.).into()),
         material: stdmats.add(StandardMaterial {
-            base_color_texture: Some(assets.monastery_back_png.clone()),
+            base_color: Color::rgb(1., 1., 1.).into(),
             perceptual_roughness: 1.0,
-            cull_mode: Some(Face::Front),
+            reflectance: 0.0,
+            // cull_mode: Some(Face::Front),
             ..default()
         }),
         ..Default::default()
@@ -403,9 +426,9 @@ fn scene_setup(
     commands.spawn(PbrBundle {
         transform: Transform::from_xyz(2.0, 0.0, -5.0) * Transform::from_scale((02.101, 02.101, 02.101).into())
             * Transform::from_rotation(Quat::from_axis_angle(Vec3::Y, PI)),
-        mesh: assets.monastery_back.clone(),
+        mesh: assets.monastery_back_shelf.clone(),
         material: stdmats.add(StandardMaterial {
-            base_color_texture: Some(assets.monastery_back_png.clone()),
+            base_color_texture: Some(assets.monastery_back_shelf_png.clone()),
             perceptual_roughness: 1.0,
             cull_mode: Some(Face::Front),
             ..default()
@@ -430,9 +453,9 @@ fn scene_setup(
     commands.spawn(PbrBundle {
         transform: Transform::from_xyz(-10.0, 0.0, -30.0) * Transform::from_scale((7.001, 7.001, 7.001).into())
             * Transform::from_rotation(Quat::from_axis_angle(Vec3::Y, PI)),
-        mesh: assets.monastery_back.clone(),
+        mesh: assets.monastery_back_shelf.clone(),
         material: stdmats.add(StandardMaterial {
-            base_color_texture: Some(assets.monastery_back_png.clone()),
+            base_color_texture: Some(assets.monastery_back_shelf_png.clone()),
             perceptual_roughness: 1.0,
             cull_mode: Some(Face::Front),
             ..default()
@@ -443,9 +466,9 @@ fn scene_setup(
     commands.spawn(PbrBundle {
         transform: Transform::from_xyz(0.0, 0.0, -30.0) * Transform::from_scale((7.001, 7.001, 7.001).into())
             * Transform::from_rotation(Quat::from_axis_angle(Vec3::Y, PI)),
-        mesh: assets.monastery_back.clone(),
+        mesh: assets.monastery_back_shelf.clone(),
         material: stdmats.add(StandardMaterial {
-            base_color_texture: Some(assets.monastery_back_png.clone()),
+            base_color_texture: Some(assets.monastery_back_shelf_png.clone()),
             perceptual_roughness: 1.0,
             cull_mode: Some(Face::Front),
             ..default()
@@ -456,9 +479,9 @@ fn scene_setup(
     commands.spawn(PbrBundle {
         transform: Transform::from_xyz(10.0, 0.0, -30.0) * Transform::from_scale((7.001, 7.001, 7.001).into())
             * Transform::from_rotation(Quat::from_axis_angle(Vec3::Y, PI)),
-        mesh: assets.monastery_back.clone(),
+        mesh: assets.monastery_back_shelf.clone(),
         material: stdmats.add(StandardMaterial {
-            base_color_texture: Some(assets.monastery_back_png.clone()),
+            base_color_texture: Some(assets.monastery_back_shelf_png.clone()),
             perceptual_roughness: 1.0,
             cull_mode: Some(Face::Front),
             ..default()
@@ -491,204 +514,315 @@ fn scene_setup(
         ..Default::default()
     });
 
-    commands.spawn(
-        StateMachine::new(YNYNIdleLState)
-        .trans::<YNYNIdleLState>(YNYNWalkLTrigger, YNYNWalkLState)
-        .trans::<YNYNWalkLState>(YNYNIdleLTrigger, YNYNIdleLState)
-        .insert_on_enter::<YNYNWalkLState>(VoxAnimBundle {
-            voxel_mesh: assets.monk_walk_1.clone(),
-            voxel_mat: stdmats.add(StandardMaterial {
-                base_color_texture: Some(assets.monk_walk_1_png.clone()),
-                perceptual_roughness: 1.0,
-                cull_mode: Some(Face::Front),
-                ..default()
-            }),
-            animation: VoxAnim {
-                frame_duration: 250,
-                frame_time_lapsed: 0,
-                frame_count: 8,
-                meshes: vec![
-                assets.monk_walk_1.clone(), 
-                assets.monk_walk_2.clone(), 
-                assets.monk_walk_3.clone(), 
-                assets.monk_walk_4.clone(), 
-                assets.monk_walk_5.clone(), 
-                assets.monk_walk_6.clone()
-                ],
-                materials: vec![
-                    stdmats.add(StandardMaterial {
-                        base_color_texture: Some(assets.monk_walk_1_png.clone()),
-                        perceptual_roughness: 1.0,
-                        cull_mode: Some(Face::Front),
-                        ..default()
-                    }), 
-                    stdmats.add(StandardMaterial {
-                        base_color_texture: Some(assets.monk_walk_2_png.clone()),
-                        perceptual_roughness: 1.0,
-                        cull_mode: Some(Face::Front),
-                        ..default()
-                    }), 
-                    stdmats.add(StandardMaterial {
-                        base_color_texture: Some(assets.monk_walk_3_png.clone()),
-                        perceptual_roughness: 1.0,
-                        cull_mode: Some(Face::Front),
-                        ..default()
-                    }), 
-                    stdmats.add(StandardMaterial {
-                        base_color_texture: Some(assets.monk_walk_4_png.clone()),
-                        perceptual_roughness: 1.0,
-                        cull_mode: Some(Face::Front),
-                        ..default()
-                    }), 
-                    stdmats.add(StandardMaterial {
-                        base_color_texture: Some(assets.monk_walk_5_png.clone()),
-                        perceptual_roughness: 1.0,
-                        cull_mode: Some(Face::Front),
-                        ..default()
-                    }), 
-                    stdmats.add(StandardMaterial {
-                        base_color_texture: Some(assets.monk_walk_6_png.clone()),
-                        perceptual_roughness: 1.0,
-                        cull_mode: Some(Face::Front),
-                        ..default()
-                    }), 
-                    ],
-            },
-        })
-        .insert_on_enter::<YNYNIdleLState>(VoxAnimBundle {
-            voxel_mesh: assets.monk_idle_1.clone(),
-            voxel_mat: stdmats.add(StandardMaterial {
-                base_color_texture: Some(assets.monk_idle_1_png.clone()),
-                perceptual_roughness: 1.0,
-                cull_mode: Some(Face::Front),
-                ..default()
-            }),
-            animation: VoxAnim {
-                frame_duration: 250,
-                frame_time_lapsed: 0,
-                frame_count: 6,
-                meshes: vec![
-                assets.monk_idle_1.clone(), 
-                assets.monk_idle_1.clone(), 
-                assets.monk_idle_1.clone(), 
-                assets.monk_idle_1.clone(), 
-                assets.monk_idle_2.clone(), 
-                assets.monk_idle_3.clone(), 
-                assets.monk_idle_4.clone(),
-                assets.monk_idle_5.clone(), 
-                assets.monk_idle_5.clone(), 
-                assets.monk_idle_5.clone(), 
-                assets.monk_idle_5.clone(), 
-                assets.monk_idle_6.clone(), 
-                assets.monk_idle_7.clone(),  
-                assets.monk_idle_8.clone(),
-                ],
-                materials: vec![
-                    stdmats.add(StandardMaterial {
-                        base_color_texture: Some(assets.monk_idle_1_png.clone()),
-                        perceptual_roughness: 1.0,
-                        cull_mode: Some(Face::Front),
-                        ..default()
-                    }), 
-                    stdmats.add(StandardMaterial {
-                        base_color_texture: Some(assets.monk_idle_1_png.clone()),
-                        perceptual_roughness: 1.0,
-                        cull_mode: Some(Face::Front),
-                        ..default()
-                    }), 
-                    stdmats.add(StandardMaterial {
-                        base_color_texture: Some(assets.monk_idle_1_png.clone()),
-                        perceptual_roughness: 1.0,
-                        cull_mode: Some(Face::Front),
-                        ..default()
-                    }), 
-                    stdmats.add(StandardMaterial {
-                        base_color_texture: Some(assets.monk_idle_1_png.clone()),
-                        perceptual_roughness: 1.0,
-                        cull_mode: Some(Face::Front),
-                        ..default()
-                    }), 
-                    stdmats.add(StandardMaterial {
-                        base_color_texture: Some(assets.monk_idle_2_png.clone()),
-                        perceptual_roughness: 1.0,
-                        cull_mode: Some(Face::Front),
-                        ..default()
-                    }), 
-                    stdmats.add(StandardMaterial {
-                        base_color_texture: Some(assets.monk_idle_3_png.clone()),
-                        perceptual_roughness: 1.0,
-                        cull_mode: Some(Face::Front),
-                        ..default()
-                    }), 
-                    stdmats.add(StandardMaterial {
-                        base_color_texture: Some(assets.monk_idle_4_png.clone()),
-                        perceptual_roughness: 1.0,
-                        cull_mode: Some(Face::Front),
-                        ..default()
-                    }),
-                    stdmats.add(StandardMaterial {
-                        base_color_texture: Some(assets.monk_idle_5_png.clone()),
-                        perceptual_roughness: 1.0,
-                        cull_mode: Some(Face::Front),
-                        ..default()
-                    }), 
-                    stdmats.add(StandardMaterial {
-                        base_color_texture: Some(assets.monk_idle_5_png.clone()),
-                        perceptual_roughness: 1.0,
-                        cull_mode: Some(Face::Front),
-                        ..default()
-                    }), 
-                    stdmats.add(StandardMaterial {
-                        base_color_texture: Some(assets.monk_idle_5_png.clone()),
-                        perceptual_roughness: 1.0,
-                        cull_mode: Some(Face::Front),
-                        ..default()
-                    }), 
-                    stdmats.add(StandardMaterial {
-                        base_color_texture: Some(assets.monk_idle_5_png.clone()),
-                        perceptual_roughness: 1.0,
-                        cull_mode: Some(Face::Front),
-                        ..default()
-                    }), 
-                    stdmats.add(StandardMaterial {
-                        base_color_texture: Some(assets.monk_idle_6_png.clone()),
-                        perceptual_roughness: 1.0,
-                        cull_mode: Some(Face::Front),
-                        ..default()
-                    }), 
-                    stdmats.add(StandardMaterial {
-                        base_color_texture: Some(assets.monk_idle_7_png.clone()),
-                        perceptual_roughness: 1.0,
-                        cull_mode: Some(Face::Front),
-                        ..default()
-                    }),  
-                    stdmats.add(StandardMaterial {
-                        base_color_texture: Some(assets.monk_idle_8_png.clone()),
-                        perceptual_roughness: 1.0,
-                        cull_mode: Some(Face::Front),
-                        ..default()
-                    }),
-                ],
-            },
-        })
-        .remove_on_exit::<YNYNWalkLState, (VoxAnim, Handle<Mesh>, YNYNWalkLComp)>()
-        .remove_on_exit::<YNYNIdleLState, (VoxAnim, Handle<Mesh>, YNYNIdleLComp)>()
-    ).insert(PbrBundle {
-        transform: Transform::from_xyz(0.0, 0.0, 0.0) * Transform::from_scale((01.07, 01.07, 01.07).into())
-            * Transform::from_rotation(Quat::from_axis_angle(Vec3::Y, PI)),
-        mesh: assets.monk_idle_1.clone(),//assetos.load("art/idle/monk-idle-1n5.vox"),//assets.monk_idle_1n5.clone(),
-        material: stdmats.add(StandardMaterial {
-            base_color_texture: Some(assets.monk_idle_1_png.clone()),
-            perceptual_roughness: 1.0,
-            cull_mode: Some(Face::Front),
-            ..default()
-        }),
-        ..Default::default()
-    }).insert(VoxelChar {
+    // commands.spawn(
+    //     StateMachine::new(YNYNIdleLState)
+    //     .trans::<YNYNIdleLState>(YNYNWalkLTrigger, YNYNWalkLState)
+    //     .trans::<YNYNWalkLState>(YNYNIdleLTrigger, YNYNIdleLState)
+    //     .insert_on_enter::<YNYNWalkLState>(VoxAnimBundle {
+    //         voxel_mesh: assets.monk_walk_1.clone(),
+    //         voxel_mat: stdmats.add(StandardMaterial {
+    //             base_color_texture: Some(assets.monk_walk_1_png.clone()),
+    //             perceptual_roughness: 1.0,
+    //             cull_mode: Some(Face::Front),
+    //             ..default()
+    //         }),
+    //         animation: VoxAnim {
+    //             frame_duration: 250,
+    //             frame_time_lapsed: 0,
+    //             frame_count: 8,
+    //             meshes: vec![
+    //             assets.monk_walk_1.clone(), 
+    //             assets.monk_walk_2.clone(), 
+    //             assets.monk_walk_3.clone(), 
+    //             assets.monk_walk_4.clone(), 
+    //             assets.monk_walk_5.clone(), 
+    //             assets.monk_walk_6.clone()
+    //             ],
+    //             materials: vec![
+    //                 stdmats.add(StandardMaterial {
+    //                     base_color_texture: Some(assets.monk_walk_1_png.clone()),
+    //                     perceptual_roughness: 1.0,
+    //                     cull_mode: Some(Face::Front),
+    //                     ..default()
+    //                 }), 
+    //                 stdmats.add(StandardMaterial {
+    //                     base_color_texture: Some(assets.monk_walk_2_png.clone()),
+    //                     perceptual_roughness: 1.0,
+    //                     cull_mode: Some(Face::Front),
+    //                     ..default()
+    //                 }), 
+    //                 stdmats.add(StandardMaterial {
+    //                     base_color_texture: Some(assets.monk_walk_3_png.clone()),
+    //                     perceptual_roughness: 1.0,
+    //                     cull_mode: Some(Face::Front),
+    //                     ..default()
+    //                 }), 
+    //                 stdmats.add(StandardMaterial {
+    //                     base_color_texture: Some(assets.monk_walk_4_png.clone()),
+    //                     perceptual_roughness: 1.0,
+    //                     cull_mode: Some(Face::Front),
+    //                     ..default()
+    //                 }), 
+    //                 stdmats.add(StandardMaterial {
+    //                     base_color_texture: Some(assets.monk_walk_5_png.clone()),
+    //                     perceptual_roughness: 1.0,
+    //                     cull_mode: Some(Face::Front),
+    //                     ..default()
+    //                 }), 
+    //                 stdmats.add(StandardMaterial {
+    //                     base_color_texture: Some(assets.monk_walk_6_png.clone()),
+    //                     perceptual_roughness: 1.0,
+    //                     cull_mode: Some(Face::Front),
+    //                     ..default()
+    //                 }), 
+    //                 ],
+    //         },
+    //     })
+    //     .insert_on_enter::<YNYNIdleLState>(VoxAnimBundle {
+    //         voxel_mesh: assets.monk_idle_1.clone(),
+    //         voxel_mat: stdmats.add(StandardMaterial {
+    //             base_color_texture: Some(assets.monk_idle_1_png.clone()),
+    //             perceptual_roughness: 1.0,
+    //             cull_mode: Some(Face::Front),
+    //             ..default()
+    //         }),
+    //         animation: VoxAnim {
+    //             frame_duration: 250,
+    //             frame_time_lapsed: 0,
+    //             frame_count: 6,
+    //             meshes: vec![
+    //             assets.monk_idle_1.clone(), 
+    //             assets.monk_idle_1.clone(), 
+    //             assets.monk_idle_1.clone(), 
+    //             assets.monk_idle_1.clone(), 
+    //             assets.monk_idle_2.clone(), 
+    //             assets.monk_idle_3.clone(), 
+    //             assets.monk_idle_4.clone(),
+    //             assets.monk_idle_5.clone(), 
+    //             assets.monk_idle_5.clone(), 
+    //             assets.monk_idle_5.clone(), 
+    //             assets.monk_idle_5.clone(), 
+    //             assets.monk_idle_6.clone(), 
+    //             assets.monk_idle_7.clone(),  
+    //             assets.monk_idle_8.clone(),
+    //             ],
+    //             materials: vec![
+    //                 stdmats.add(StandardMaterial {
+    //                     base_color_texture: Some(assets.monk_idle_1_png.clone()),
+    //                     perceptual_roughness: 1.0,
+    //                     cull_mode: Some(Face::Front),
+    //                     ..default()
+    //                 }), 
+    //                 stdmats.add(StandardMaterial {
+    //                     base_color_texture: Some(assets.monk_idle_1_png.clone()),
+    //                     perceptual_roughness: 1.0,
+    //                     cull_mode: Some(Face::Front),
+    //                     ..default()
+    //                 }), 
+    //                 stdmats.add(StandardMaterial {
+    //                     base_color_texture: Some(assets.monk_idle_1_png.clone()),
+    //                     perceptual_roughness: 1.0,
+    //                     cull_mode: Some(Face::Front),
+    //                     ..default()
+    //                 }), 
+    //                 stdmats.add(StandardMaterial {
+    //                     base_color_texture: Some(assets.monk_idle_1_png.clone()),
+    //                     perceptual_roughness: 1.0,
+    //                     cull_mode: Some(Face::Front),
+    //                     ..default()
+    //                 }), 
+    //                 stdmats.add(StandardMaterial {
+    //                     base_color_texture: Some(assets.monk_idle_2_png.clone()),
+    //                     perceptual_roughness: 1.0,
+    //                     cull_mode: Some(Face::Front),
+    //                     ..default()
+    //                 }), 
+    //                 stdmats.add(StandardMaterial {
+    //                     base_color_texture: Some(assets.monk_idle_3_png.clone()),
+    //                     perceptual_roughness: 1.0,
+    //                     cull_mode: Some(Face::Front),
+    //                     ..default()
+    //                 }), 
+    //                 stdmats.add(StandardMaterial {
+    //                     base_color_texture: Some(assets.monk_idle_4_png.clone()),
+    //                     perceptual_roughness: 1.0,
+    //                     cull_mode: Some(Face::Front),
+    //                     ..default()
+    //                 }),
+    //                 stdmats.add(StandardMaterial {
+    //                     base_color_texture: Some(assets.monk_idle_5_png.clone()),
+    //                     perceptual_roughness: 1.0,
+    //                     cull_mode: Some(Face::Front),
+    //                     ..default()
+    //                 }), 
+    //                 stdmats.add(StandardMaterial {
+    //                     base_color_texture: Some(assets.monk_idle_5_png.clone()),
+    //                     perceptual_roughness: 1.0,
+    //                     cull_mode: Some(Face::Front),
+    //                     ..default()
+    //                 }), 
+    //                 stdmats.add(StandardMaterial {
+    //                     base_color_texture: Some(assets.monk_idle_5_png.clone()),
+    //                     perceptual_roughness: 1.0,
+    //                     cull_mode: Some(Face::Front),
+    //                     ..default()
+    //                 }), 
+    //                 stdmats.add(StandardMaterial {
+    //                     base_color_texture: Some(assets.monk_idle_5_png.clone()),
+    //                     perceptual_roughness: 1.0,
+    //                     cull_mode: Some(Face::Front),
+    //                     ..default()
+    //                 }), 
+    //                 stdmats.add(StandardMaterial {
+    //                     base_color_texture: Some(assets.monk_idle_6_png.clone()),
+    //                     perceptual_roughness: 1.0,
+    //                     cull_mode: Some(Face::Front),
+    //                     ..default()
+    //                 }), 
+    //                 stdmats.add(StandardMaterial {
+    //                     base_color_texture: Some(assets.monk_idle_7_png.clone()),
+    //                     perceptual_roughness: 1.0,
+    //                     cull_mode: Some(Face::Front),
+    //                     ..default()
+    //                 }),  
+    //                 stdmats.add(StandardMaterial {
+    //                     base_color_texture: Some(assets.monk_idle_8_png.clone()),
+    //                     perceptual_roughness: 1.0,
+    //                     cull_mode: Some(Face::Front),
+    //                     ..default()
+    //                 }),
+    //             ],
+    //         },
+    //     })
+    //     .remove_on_exit::<YNYNWalkLState, (VoxAnim, Handle<Mesh>, YNYNWalkLComp)>()
+    //     .remove_on_exit::<YNYNIdleLState, (VoxAnim, Handle<Mesh>, YNYNIdleLComp)>()
+    // ).insert(PbrBundle {
+    //     transform: Transform::from_xyz(0.0, 0.0, 0.0) * Transform::from_scale((01.07, 01.07, 01.07).into())
+    //         * Transform::from_rotation(Quat::from_axis_angle(Vec3::Y, PI)),
+    //     mesh: assets.monk_idle_1.clone(),//assetos.load("art/idle/monk-idle-1n5.vox"),//assets.monk_idle_1n5.clone(),
+    //     material: stdmats.add(StandardMaterial {
+    //         base_color_texture: Some(assets.monk_idle_1_png.clone()),
+    //         perceptual_roughness: 1.0,
+    //         cull_mode: Some(Face::Front),
+    //         ..default()
+    //     }),
+    //     ..Default::default()
+    // }).insert(VoxelChar {
+    //     name: "monk".to_owned()
+    // }).insert(VoxelVelocity {
+    //     vector: Vec3::ZERO
+    // }).insert(YNYNIdleLComp);
+
+    let mut parent = commands.spawn(
+    TransformBundle::from(Transform::from_translation(Vec3::ZERO)))
+    .insert(VisibilityBundle::default())
+    .insert(VoxelChar {
         name: "monk".to_owned()
     }).insert(VoxelVelocity {
         vector: Vec3::ZERO
-    }).insert(YNYNIdleLComp);
+    }).id();
+    let mut child = commands.spawn(PbrBundle {
+        transform: Transform::from_xyz(1.1, 0.0, 1.2555) * Transform::from_scale((0.07, 0.07, 0.07).into())
+            * Transform::from_rotation(Quat::from_axis_angle(Vec3::Y, PI)),
+        mesh: assets.peon_idle_1.clone(),//assetos.load("art/idle/monk-idle-1n5.vox"),//assets.monk_idle_1n5.clone(),
+        // material: stdmats.add(Color::rgb(1., 1., 1.).into()),
+        material: stdmats.add(StandardMaterial {
+            base_color: Color::rgb(0.7, 0.7, 0.7).into(),
+            // base_color: Color::Hsla { hue: 0.5, saturation: 0.5, lightness: 1.0, alpha: 1. },
+            // perceptual_roughness: 01.0,
+            // emissive: Color::WHITE,
+            // reflectance: 0.0,
+            metallic: 1.0,
+            unlit: true,
+            // cull_mode: Some(Face::Front),
+            ..default()
+        }),
+        ..Default::default()
+    }).insert(StateMachine::new(YNYNIdleLState)
+    .trans::<YNYNIdleLState>(YNYNWalkLTrigger, YNYNWalkLState)
+    .trans::<YNYNWalkLState>(YNYNIdleLTrigger, YNYNIdleLState)
+    .insert_on_enter::<YNYNWalkLState>(VoxAnimBundle2 {
+        voxel_mesh: assets.peon_walk_1.clone(),
+        animation: VoxAnim2 {
+            frame_duration: 250,
+            frame_time_lapsed: 0,
+            frame_count: 6,
+            meshes: vec![
+            assets.peon_walk_1.clone(), 
+            assets.peon_walk_2.clone(), 
+            assets.peon_walk_3.clone(), 
+            assets.peon_walk_4.clone(),
+            assets.peon_walk_5.clone(), 
+            assets.peon_walk_6.clone(),
+            ],
+        },
+    })
+    .insert_on_enter::<YNYNIdleLState>(VoxAnimBundle2 {
+        voxel_mesh: assets.peon_idle_1.clone(),
+        animation: VoxAnim2 {
+            frame_duration: 250,
+            frame_time_lapsed: 0,
+            frame_count: 6,
+            meshes: vec![
+            assets.peon_idle_1.clone(), 
+            assets.peon_idle_1.clone(),
+            assets.peon_idle_2.clone(),
+            assets.peon_idle_1.clone(),
+            assets.peon_idle_3.clone(),
+            assets.peon_idle_1.clone(), 
+            ],
+        },
+    })
+    .remove_on_exit::<YNYNWalkLState, (VoxAnim2, Handle<Mesh>, YNYNWalkLComp)>()
+    .remove_on_exit::<YNYNIdleLState, (VoxAnim2, Handle<Mesh>, YNYNIdleLComp)>()).insert(YNYNIdleLComp).id();
+    // commands.spawn(
+    //     StateMachine::new(YNYNIdleLState)
+    //     .trans::<YNYNIdleLState>(YNYNWalkLTrigger, YNYNWalkLState)
+    //     .trans::<YNYNWalkLState>(YNYNIdleLTrigger, YNYNIdleLState)
+    //     .insert_on_enter::<YNYNWalkLState>(VoxAnimBundle2 {
+    //         voxel_mesh: assets.peon_walk_1.clone(),
+    //         animation: VoxAnim2 {
+    //             frame_duration: 250,
+    //             frame_time_lapsed: 0,
+    //             frame_count: 8,
+    //             meshes: vec![
+    //             assets.peon_walk_1.clone(), 
+    //             assets.peon_walk_2.clone(), 
+    //             ],
+    //         },
+    //     })
+    //     .insert_on_enter::<YNYNIdleLState>(VoxAnimBundle2 {
+    //         voxel_mesh: assets.peon_idle_1.clone(),
+    //         animation: VoxAnim2 {
+    //             frame_duration: 250,
+    //             frame_time_lapsed: 0,
+    //             frame_count: 6,
+    //             meshes: vec![
+    //             assets.peon_idle_1.clone(), 
+    //             assets.peon_idle_1.clone(), 
+    //             ],
+    //         },
+    //     })
+    //     .remove_on_exit::<YNYNWalkLState, (VoxAnim, Handle<Mesh>, YNYNWalkLComp)>()
+    //     .remove_on_exit::<YNYNIdleLState, (VoxAnim, Handle<Mesh>, YNYNIdleLComp)>()
+    // ).insert(PbrBundle {
+    //     transform: Transform::from_xyz(0.0, 0.0, 0.0) * Transform::from_scale((0.07, 0.07, 0.07).into())
+    //         * Transform::from_rotation(Quat::from_axis_angle(Vec3::Y, PI)),
+    //     mesh: assets.peon_idle_1.clone(),//assetos.load("art/idle/monk-idle-1n5.vox"),//assets.monk_idle_1n5.clone(),
+    //     // material: stdmats.add(Color::rgb(1., 1., 1.).into()),
+    //     material: stdmats.add(StandardMaterial {
+    //         base_color: Color::rgb(1., 1., 1.).into(),
+    //         perceptual_roughness: 1.0,
+    //         // cull_mode: Some(Face::Front),
+    //         ..default()
+    //     }),
+    //     ..Default::default()
+    // }).insert(VoxelChar {
+    //     name: "monk".to_owned()
+    // }).insert(VoxelVelocity {
+    //     vector: Vec3::ZERO
+    // }).insert(YNYNIdleLComp)
+    commands.entity(parent).add_child(child);
 
     
     
@@ -776,15 +910,20 @@ fn move_plyr(
 fn ynyn_walk_l(
     // mut qry: Query<(Entity, &YNYNIdleLComp, &mut VoxAnim, &mut Handle<Scene>)>,
     // mut qry2: Query<(Entity, &YNYNWalkLComp, &mut VoxAnim, &mut Handle<Scene>)>,
+    qry: Query<&VoxelVelocity>,
     mut commands: Commands, 
     mut set: ParamSet<(
-        Query<(Entity, &YNYNIdleLComp, &mut VoxAnim, &mut Handle<Mesh>, &mut Handle<StandardMaterial>, &VoxelVelocity)>,
-        Query<(Entity, &YNYNWalkLComp, &mut VoxAnim, &mut Handle<Mesh>, &mut Handle<StandardMaterial>, &VoxelVelocity)>,
+        Query<(Entity, &YNYNIdleLComp, &mut VoxAnim2, &mut Handle<Mesh>, &mut Handle<StandardMaterial>, &Parent)>,//&VoxelVelocity)>,
+        Query<(Entity, &YNYNWalkLComp, &mut VoxAnim2, &mut Handle<Mesh>, &mut Handle<StandardMaterial>, &Parent)>,//&VoxelVelocity)>,
     )>,
     assets: Res<ImageAssets>,
     time: Res<FixedTimesteps>,
 ) {
-    for (entity, comp, mut vox_anim, mut mesh, mut mat, velo) in &mut set.p0() {
+    // let (ernt, prnt) = set.p2();
+    // let ent = set.p2().get_single().is_ok();
+    // let result = set.p3().get(ent);
+    // if let Ok(veloc) = set.p2().get_component::<VoxelVelocity>(prnt.get()) {
+    for (entity, comp, mut vox_anim, mut mesh, mut mat, prnt) in &mut set.p0() {
         // println!("Cooperkins");
         let step = time.get_current().unwrap().step;
         let index = vox_anim.frame_time_lapsed / vox_anim.frame_duration;
@@ -793,23 +932,27 @@ fn ynyn_walk_l(
         }
         if index <= vox_anim.meshes.len() - 1 && index >= 0 {
             *mesh = vox_anim.meshes[index].clone();
-            *mat = vox_anim.materials[index].clone();
+            // *mat = vox_anim.materials[index].clone();
         }
         if vox_anim.frame_time_lapsed > vox_anim.frame_duration * vox_anim.meshes.len() {
             vox_anim.frame_time_lapsed = 0;
         } 
         vox_anim.frame_time_lapsed += step.as_millis() as usize;
         // println!("Idling x {} z {}", velo.vector.x, velo.vector.z);
-        if velo.vector.x != 0. || velo.vector.z != 0. {
-            // println!("Be moving!");
-            commands.entity(entity).insert(YNYNWalkLComp);
-        } else {
-            // println!("Be idling");
-            // commands.entity(entity).insert(YNYNIdleLComp);
+        // let prnt = prnt.get();
+        if let Ok(veloc) = qry.get_component::<VoxelVelocity>(prnt.get()) {
+            if veloc.vector.x != 0. || veloc.vector.z != 0. {
+                // println!("Be moving!");
+                commands.entity(entity).insert(YNYNWalkLComp);
+            } else {
+                // println!("Be idling");
+                // commands.entity(entity).insert(YNYNIdleLComp);
+            }
         }
+        
     }
 
-    for (entity, comp, mut vox_anim, mut mesh, mut mat, velo) in &mut set.p1() {
+    for (entity, comp, mut vox_anim, mut mesh, mut mat, prnt) in &mut set.p1() {
         // println!("Cooperkins");
         let step = time.get_current().unwrap().step;
         let index = vox_anim.frame_time_lapsed / vox_anim.frame_duration;
@@ -818,19 +961,22 @@ fn ynyn_walk_l(
         }
         if index <= vox_anim.meshes.len() - 1 && index >= 0 {
             *mesh = vox_anim.meshes[index].clone();
-            *mat = vox_anim.materials[index].clone();
+            // *mat = vox_anim.materials[index].clone();
         }
         if vox_anim.frame_time_lapsed > vox_anim.frame_duration * vox_anim.meshes.len() {
             vox_anim.frame_time_lapsed = 0;
         } 
         vox_anim.frame_time_lapsed += step.as_millis() as usize;
         // println!("Walkin x {} z {}", velo.vector.x, velo.vector.z);
-        if velo.vector.x != 0. || velo.vector.z != 0. {
-            // println!("Be moving!");
-            // commands.entity(entity).insert(YNYNWalkLComp);
-        } else {
-            // println!("Be idling");
-            commands.entity(entity).insert(YNYNIdleLComp);
+        if let Ok(veloc) = qry.get_component::<VoxelVelocity>(prnt.get()) {
+            if veloc.vector.x != 0. || veloc.vector.z != 0. {
+                // println!("Be moving!");
+                // commands.entity(entity).insert(YNYNWalkLComp);
+            } else {
+                // println!("Be idling");
+                commands.entity(entity).insert(YNYNIdleLComp);
+            }
         }
-    }
+        
+}
 }
