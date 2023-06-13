@@ -17,6 +17,12 @@ pub enum GameState { Loading, MainMenu, Staging, Ready }
 pub struct Person;
 
 #[derive(Component)]
+pub struct Panel;
+
+#[derive(Component)]
+pub struct PanelChar;
+
+#[derive(Component)]
 pub struct Door;
 
 #[derive(Component)]

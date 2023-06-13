@@ -1,6 +1,8 @@
 use bevy::prelude::*;
 
-pub mod show_message_ui;
+pub mod show_message;
+pub mod show_small_message;
+pub mod show_portrait_message;
 pub mod hide_message_ui;
 pub mod move_to_loc_3d;
 pub mod move_to_loc_2d;
@@ -10,20 +12,18 @@ pub mod change_anim;
 pub mod ynyn_anim_state_chgs;
 pub mod type_writer_effect;
 pub mod pause_queue;
+pub mod mando_queue;
 
 use crate::components::CommandCompleteIndicator;
-use crate::mandoqueue::{Mando, MandoQueue, MandoParam};
-use crate::mq2::{Mando2, MandoQueue2};
+// use crate::mandoqueue::{Mando_old, MandoQueue_old};
+// use crate::mando_queue::{Mando, MandoQueue, MandoParam};
 
-use self::show_message_ui::ShowMessageUICommand;
-use self::hide_message_ui::HideMessageUICommand;
+
+use self::mando_queue::*;
 use self::move_to_loc_3d::MoveToLoc3DCommand;
 use self::move_to_loc_2d::MoveToLoc2DCommand;
-use self::move_to_loc_2d_i::MoveToLoc2DIv2Command;
 use self::play_anim_once::PlayAnimOnceCommand;
-use self::change_anim::ChangeAnim;
-use self::type_writer_effect::AffectTypeWriterCommand;
-use self::pause_queue::{PauseQueueCommand, pause_queue_cmd};
+use self::pause_queue::{pause_queue_cmd};
 use self::ynyn_anim_state_chgs::{YNYNIdleLCMD, YNYNWalkLCMD, YNYNWalkRCMD, YNYNIdleRCMD};
 
 const LEFT_WALL: f32 = -450.;
@@ -33,17 +33,17 @@ const TIME_STEP: f32 = 10.0;
 const PLYR_SPEED: f32 = 2.0;
 
 //TODO: Integrate this into the mandoqueue adding, or make a macro instead.
-struct AddToMandoQueueCommand{
-    mandos: Vec<Mando>,
-}
+// struct AddToMandoQueueCommand{
+//     mandos: Vec<Mando_old>,
+// }
 
-impl bevy::ecs::system::Command for AddToMandoQueueCommand {
-    fn write(self, world: &mut World) {
-        let mut vecParams: Vec<Mando> = Vec::new();
-        let mut mq = world.get_resource_mut::<MandoQueue>().unwrap();
-        mq.mandos.push_back(vecParams);
-    }
-}
+// impl bevy::ecs::system::Command for AddToMandoQueueCommand {
+//     fn write(self, world: &mut World) {
+//         let mut vecParams: Vec<Mando_old> = Vec::new();
+//         let mut mq = world.get_resource_mut::<MandoQueue_old>().unwrap();
+//         mq.mandos.push_back(vecParams);
+//     }
+// }
 
 struct StringCommmand(String);
 impl bevy::ecs::system::Command for StringCommmand {
@@ -53,7 +53,7 @@ impl bevy::ecs::system::Command for StringCommmand {
 }
 
 struct FillerMandoCommand {
-    mando: Mando2<fn(std::vec::Vec<MandoParam>, &mut World, u128, u128)>, 
+    mando: Mando<fn(std::vec::Vec<MandoParam>, &mut World, u128, u128)>, 
     delta: u128, 
     elapsed_time: u128, 
 }
@@ -65,7 +65,7 @@ fn print_type_of<T>(_: &T) {
 impl bevy::ecs::system::Command for FillerMandoCommand {
     fn write(self, world: &mut World) {
         
-        let mut mq = world.get_resource_mut::<MandoQueue2>().unwrap();
+        let mut mq = world.get_resource_mut::<MandoQueue>().unwrap();
         //  println!("Reibe");
         // println!("mq size {}", mq.currentMando.);
         // let val: fn(std::vec::Vec<MandoParam>, &mut World, u128, u128, &str) = mq.currentMando[0].mandoFunc; //self.mando.mandoFunc;
@@ -101,7 +101,7 @@ impl bevy::ecs::system::Command for HolderMandoCommand {
 }
 
 pub trait GameCommandsExt {
-    fn add_to_mando_queue(&mut self, params: Vec<Mando>);
+    // fn add_to_mando_queue(&mut self, params: Vec<Mando_old>);
     fn print_message(&mut self, msg: String);
     fn play_anim_once(&mut self, entity: Entity);
     fn ynyn_walk_l(&mut self, entity: Entity);
@@ -117,16 +117,16 @@ pub trait GameCommandsExt {
     fn despawn_message_ui(&mut self);
     fn pause_queue(&mut self);
     fn affect_typewriter(&mut self, elapsed_time: u128, message: &str);
-    fn filler_mando(&mut self, mando: Mando2<fn(std::vec::Vec<MandoParam>, &mut World, u128, u128)>, delta: u128, elapsedTime: u128);
+    fn filler_mando(&mut self, mando: Mando<fn(std::vec::Vec<MandoParam>, &mut World, u128, u128)>, delta: u128, elapsedTime: u128);
     fn holder_mando(&mut self);
     // fn get_currrent_mando() -> Mando;
 }
 
 impl<'w, 's> GameCommandsExt for Commands<'w, 's> {
 
-    fn add_to_mando_queue(&mut self, mandos: Vec<Mando>) {
-        self.add(AddToMandoQueueCommand {mandos: mandos});
-    }
+    // fn add_to_mando_queue(&mut self, mandos: Vec<Mando_old>) {
+    //     self.add(AddToMandoQueueCommand {mandos: mandos});
+    // }
     fn print_message(&mut self, msg: String) {
         self.add(StringCommmand(msg));
     }
@@ -152,7 +152,7 @@ impl<'w, 's> GameCommandsExt for Commands<'w, 's> {
     }
 
     fn change_anim(&mut self) {
-        self.add(ChangeAnim);
+
     }
 
     fn move_to_loc_3d(&mut self, delta: u128, elapsedTime: u128, duration: f32, location: Vec3, destination: Vec3, entity: Entity ) {// mParams: Vec<MandoParam>) {
@@ -164,7 +164,7 @@ impl<'w, 's> GameCommandsExt for Commands<'w, 's> {
     }
 
     fn move_to_loc_2d_i(&mut self, delta: u128, elapsedTime: u128, duration: f32, location: IVec2, destination: IVec2, entity: Entity ) {// mParams: Vec<MandoParam>) {
-        self.add(MoveToLoc2DIv2Command { delta: delta, elapsedTime: elapsedTime, duration: duration, location: location, destination: destination, entity: entity });
+        
     }
 
     fn move_to_loc_2d_i2(&mut self, params: Vec<MandoParam>) {
@@ -177,21 +177,20 @@ impl<'w, 's> GameCommandsExt for Commands<'w, 's> {
     }
 
     fn spawn_message_ui(&mut self) {
-        self.add(ShowMessageUICommand {});
     }
     fn despawn_message_ui(&mut self) {
-        self.add(HideMessageUICommand {});
+
     }
 
     fn pause_queue(&mut self) {
-        self.add(PauseQueueCommand {});
+
     }
 
     fn affect_typewriter(&mut self, elapsed_time: u128, message: &str) {
-        self.add(AffectTypeWriterCommand {elapsed_time: elapsed_time, message: message.to_owned()})
+        // self.add(AffectTypeWriterCommand {elapsed_time: elapsed_time, message: message.to_owned()})
     }
 
-    fn filler_mando(&mut self, mando: Mando2<fn(std::vec::Vec<MandoParam>, &mut World, u128, u128)>, delta: u128, elapsedTime: u128) {
+    fn filler_mando(&mut self, mando: Mando<fn(std::vec::Vec<MandoParam>, &mut World, u128, u128)>, delta: u128, elapsedTime: u128) {
         self.add(FillerMandoCommand {mando: mando, delta: delta, elapsed_time: elapsedTime});
     }
     fn holder_mando(&mut self) {

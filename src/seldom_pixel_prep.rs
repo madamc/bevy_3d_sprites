@@ -19,6 +19,14 @@ pub struct YNYNWalkLState;
 
 #[derive(Clone, Component, Reflect)]
 #[component(storage = "SparseSet")]
+pub struct YNYNSitState;
+
+#[derive(Clone, Component, Reflect)]
+#[component(storage = "SparseSet")]
+pub struct YNYNWriteState;
+
+#[derive(Clone, Component, Reflect)]
+#[component(storage = "SparseSet")]
 pub struct YNYNIdleRState;
 
 #[derive(Clone, Component, Reflect)]
@@ -31,6 +39,12 @@ pub struct YNYNWalkLComp;
 
 #[derive(Clone, Component)]
 pub struct YNYNIdleLComp;
+
+#[derive(Clone, Component)]
+pub struct YNYNSitComp;
+
+#[derive(Clone, Component)]
+pub struct YNYNWriteComp;
 
 #[derive(Clone, Component)]
 pub struct YNYNWalkRComp;
@@ -62,6 +76,36 @@ impl Trigger for YNYNIdleLTrigger {
         // println!("not triggered idle");
         for ent in added.1.iter() {
             // println!("triggered idle");
+            return true
+        }
+        return false
+    }
+}
+
+#[derive(FromReflect, Reflect)]
+pub struct YNYNSitTrigger;
+impl Trigger for YNYNSitTrigger {
+    type Param<'w, 's> = (Commands<'w, 's>, Query<'w, 's, Entity, Added<YNYNSitComp>>);
+
+    fn trigger(&self, _: Entity, added: &Self::Param<'_, '_>) -> bool {
+        // println!("not triggered not");
+        for ent in added.1.iter() {
+            // println!("triggered sit");
+            return true
+        }
+        return false
+    }
+}
+
+#[derive(FromReflect, Reflect)]
+pub struct YNYNWriteTrigger;
+impl Trigger for YNYNWriteTrigger {
+    type Param<'w, 's> = (Commands<'w, 's>, Query<'w, 's, Entity, Added<YNYNWriteComp>>);
+
+    fn trigger(&self, _: Entity, added: &Self::Param<'_, '_>) -> bool {
+        // println!("not triggered write");
+        for ent in added.1.iter() {
+            // println!("triggered wwrite");
             return true
         }
         return false

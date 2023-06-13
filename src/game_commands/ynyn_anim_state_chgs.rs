@@ -1,6 +1,8 @@
 use bevy::{prelude::*, ecs::system::SystemState};
 
-use crate::{ui::UIMessageWindow, game_commands::CommandCompleteIndicator, YNYNWalkLComp, YNYNIdleLComp, YNYNWalkRComp, YNYNIdleRComp, mandoqueue::{MandoParam, mpe}};
+use crate::{ui::UIMessageWindow, game_commands::CommandCompleteIndicator, YNYNWalkLComp, YNYNIdleLComp, YNYNWalkRComp, YNYNIdleRComp};
+
+use super::mando_queue::*;
 
 pub struct YNYNWalkLCMD {pub entity: Entity}
 

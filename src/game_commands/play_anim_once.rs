@@ -1,9 +1,10 @@
 use bevy::{prelude::*, ecs::system::SystemState, time::FixedTimesteps};
 use seldom_pixel::{prelude::PxAssets, sprite::{PxSprite, PxSpriteData}, asset::PxAsset};
 
-use crate::{mandoqueue::MandoParam, components::Person};
+use crate::{components::Person};
 
 use super::CommandCompleteIndicator;
+use super::mando_queue::*;
 
 pub struct PlayAnimOnceCommand{
     pub entity: Entity

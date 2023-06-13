@@ -8,8 +8,8 @@ macro_rules! mando {
     ($function_parm:expr; $param_vec:expr) => {
         {
             
-        let mut mando_vector: Vec<Mando2<fn(std::vec::Vec<MandoParam>, &mut World, u128, u128)>> = Vec::new();
-        let mando: Mando2<fn(std::vec::Vec<MandoParam>, &mut World, u128, u128)> = Mando2 { mando_func: $function_parm, params: $param_vec };
+        let mut mando_vector: Vec<Mando<fn(std::vec::Vec<MandoParam>, &mut World, u128, u128)>> = Vec::new();
+        let mando: Mando<fn(std::vec::Vec<MandoParam>, &mut World, u128, u128)> = Mando { mando_func: $function_parm, params: $param_vec };
         mando_vector.push(mando);
         mando_vector
     }
